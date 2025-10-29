@@ -1,0 +1,71 @@
+# Скопируйте этот файл в .env и заполните своими значениями
+
+# Основные настройки сервера
+NODE_ENV=development
+PORT=3001
+API_VERSION=v1
+
+# База данных MongoDB
+MONGODB_URI=mongodb://localhost:27017/optica-crm
+# Для MongoDB Atlas (облачная БД):
+# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/optica-crm
+
+# JWT токены
+JWT_SECRET=your-super-secret-jwt-key-here-change-in-production
+JWT_EXPIRE=7d
+JWT_REFRESH_SECRET=your-refresh-secret-key-here
+JWT_REFRESH_EXPIRE=30d
+
+# SMS сервис TurboSMS
+# Вариант 1: Токен (рекомендуется)
+TURBOSMS_TOKEN=your-turbosms-token
+# Вариант 2: Логин/пароль (альтернатива)
+TURBOSMS_LOGIN=your-turbosms-login
+TURBOSMS_PASSWORD=your-turbosms-password
+# Общие настройки
+TURBOSMS_SENDER=your-sender-name
+TURBOSMS_API_URL=https://api.turbosms.ua/message/send.json
+
+# Альтернативные SMS сервисы
+# Twilio
+TWILIO_ACCOUNT_SID=your-twilio-account-sid
+TWILIO_AUTH_TOKEN=your-twilio-auth-token
+TWILIO_PHONE_NUMBER=+1234567890
+
+# SMS.ru
+SMS_RU_API_ID=your-sms-ru-api-id
+
+# Файловое хранение
+# Локальное хранение
+UPLOAD_PATH=./uploads
+MAX_FILE_SIZE=5242880
+
+# AWS S3 (для продакшена)
+AWS_ACCESS_KEY_ID=your-aws-access-key
+AWS_SECRET_ACCESS_KEY=your-aws-secret-key
+AWS_REGION=eu-west-1
+AWS_S3_BUCKET=optica-crm-files
+
+# Cloudinary (альтернатива S3)
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+
+# Email настройки (для уведомлений админов)
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-app-password
+
+# Безопасность
+BCRYPT_ROUNDS=12
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
+
+# Логирование
+LOG_LEVEL=info
+LOG_FILE=logs/app.log
+
+# CORS настройки
+CORS_ORIGIN=http://localhost:3000
+# Для продакшена: CORS_ORIGIN=https://yourdomain.com
