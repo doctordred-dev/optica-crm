@@ -55,4 +55,5 @@ LOG_FILE=logs/app.log
 
 # CORS настройки
 CORS_ORIGIN=http://localhost:3000
-# Для продакшена: CORS_ORIGIN=https://yourdomain.com
+# Для продакшена с несколькими доменами (через запятую):
+# CORS_ORIGIN=https://optica-crm.vercel.app,https://yourdomain.com
