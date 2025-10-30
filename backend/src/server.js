@@ -60,6 +60,30 @@ app.get('/', (req, res) => {
   });
 });
 
+// Health check endpoint для мониторинга
+app.get('/api/health', async (req, res) => {
+  try {
+    // Проверяем подключение к базе данных
+    const mongoose = require('mongoose');
+    const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+    
+    res.status(200).json({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      database: dbStatus,
+      memory: process.memoryUsage(),
+      version: '1.0.0'
+    });
+  } catch (error) {
+    res.status(503).json({
+      status: 'error',
+      timestamp: new Date().toISOString(),
+      error: error.message
+    });
+  }
+});
+
 // API роуты
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/clients', require('./routes/clients'));

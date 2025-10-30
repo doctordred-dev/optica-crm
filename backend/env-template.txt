@@ -26,19 +26,6 @@ TURBOSMS_PASSWORD=your-turbosms-password
 TURBOSMS_SENDER=your-sender-name
 TURBOSMS_API_URL=https://api.turbosms.ua/message/send.json
 
-# Альтернативные SMS сервисы
-# Twilio
-TWILIO_ACCOUNT_SID=your-twilio-account-sid
-TWILIO_AUTH_TOKEN=your-twilio-auth-token
-TWILIO_PHONE_NUMBER=+1234567890
-
-# SMS.ru
-SMS_RU_API_ID=your-sms-ru-api-id
-
-# Файловое хранение
-# Локальное хранение
-UPLOAD_PATH=./uploads
-MAX_FILE_SIZE=5242880
 
 # AWS S3 (для продакшена)
 AWS_ACCESS_KEY_ID=your-aws-access-key
