@@ -112,9 +112,11 @@ app.get('/api/health', async (req, res) => {
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/clients', require('./routes/clients'));
 app.use('/api/orders', require('./routes/orders'));
+app.use('/api/products', require('./routes/products'));
 app.use('/api/sms', require('./routes/sms'));
 app.use('/api/analytics', require('./routes/analytics'));
 app.use('/api/upload', require('./routes/upload'));
+app.use('/api/export', require('./routes/export'));
 
 // Обработка 404
 app.use('*', (req, res) => {

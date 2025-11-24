@@ -11,22 +11,51 @@ const getClients = async (req, res) => {
       limit = 20,
       search = '',
       source = '',
+      ageMin = '',
+      ageMax = '',
+      hasOrders = '',
+      createdFrom = '',
+      createdTo = '',
       sortBy = 'createdAt',
-      sortOrder = 'desc'
+      sortOrder = 'desc',
+      includeStats = 'true'
     } = req.query;
 
     // Построение фильтра поиска
     const searchFilter = {};
     
+    // Поиск по имени или телефону
     if (search) {
-      searchFilter.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { phone: { $regex: search, $options: 'i' } }
-      ];
+      // Проверяем, является ли поиск номером телефона
+      const isPhone = /^\+?\d/.test(search);
+      
+      if (isPhone) {
+        // Нормализуем номер для поиска
+        const normalizedSearch = search.replace(/[^\d+]/g, '');
+        searchFilter.phone = { $regex: normalizedSearch, $options: 'i' };
+      } else {
+        // Поиск по имени
+        searchFilter.name = { $regex: search, $options: 'i' };
+      }
     }
 
+    // Фильтр по источнику
     if (source) {
       searchFilter.source = source;
+    }
+
+    // Фильтр по возрасту
+    if (ageMin || ageMax) {
+      searchFilter.age = {};
+      if (ageMin) searchFilter.age.$gte = parseInt(ageMin);
+      if (ageMax) searchFilter.age.$lte = parseInt(ageMax);
+    }
+
+    // Фильтр по дате создания
+    if (createdFrom || createdTo) {
+      searchFilter.createdAt = {};
+      if (createdFrom) searchFilter.createdAt.$gte = new Date(createdFrom);
+      if (createdTo) searchFilter.createdAt.$lte = new Date(createdTo);
     }
 
     // Настройка сортировки
@@ -37,7 +66,7 @@ const getClients = async (req, res) => {
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
     // Получение клиентов
-    const clients = await Client.find(searchFilter)
+    let clients = await Client.find(searchFilter)
       .populate('createdBy', 'name email')
       .populate('updatedBy', 'name email')
       .sort(sortOptions)
@@ -47,26 +76,60 @@ const getClients = async (req, res) => {
     // Подсчет общего количества
     const total = await Client.countDocuments(searchFilter);
 
-    // Добавляем статистику заказов для каждого клиента
-    const clientsWithStats = await Promise.all(
-      clients.map(async (client) => {
-        const stats = await client.getStats();
-        return {
-          ...client.toJSON(),
-          stats
-        };
-      })
-    );
+    // Фильтр по наличию заказов (после получения из БД)
+    if (hasOrders !== '') {
+      const Order = require('../models/Order');
+      const clientIds = clients.map(c => c._id);
+      
+      const clientsWithOrders = await Order.distinct('clientId', {
+        clientId: { $in: clientIds }
+      });
+
+      if (hasOrders === 'true') {
+        clients = clients.filter(c => 
+          clientsWithOrders.some(id => id.toString() === c._id.toString())
+        );
+      } else {
+        clients = clients.filter(c => 
+          !clientsWithOrders.some(id => id.toString() === c._id.toString())
+        );
+      }
+    }
+
+    // Добавляем статистику заказов для каждого клиента (опционально)
+    let clientsData = clients;
+    if (includeStats === 'true') {
+      clientsData = await Promise.all(
+        clients.map(async (client) => {
+          const stats = await client.getStats();
+          return {
+            ...client.toJSON(),
+            stats
+          };
+        })
+      );
+    } else {
+      clientsData = clients.map(c => c.toJSON());
+    }
 
     res.json({
       success: true,
       data: {
-        clients: clientsWithStats,
+        clients: clientsData,
         pagination: {
           current: parseInt(page),
           pages: Math.ceil(total / parseInt(limit)),
           total,
           limit: parseInt(limit)
+        },
+        filters: {
+          search,
+          source,
+          ageMin,
+          ageMax,
+          hasOrders,
+          createdFrom,
+          createdTo
         }
       }
     });
