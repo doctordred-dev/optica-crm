@@ -138,7 +138,7 @@ class SMSService {
       
       if (!template) {
         // Используем стандартный шаблон, если не найден в БД
-        const defaultMessage = `Добрый день, ${client.name}! Ваш заказ готов к выдаче. Магазин оптики.`;
+        const defaultMessage = `Добрий день, ${client.name}! Ваше замовлення готове до видачі. Оптика Нивки, тел. +380679157706. Адреса: бул. Павла Вірського, 6, Київ (в аптеці "Доброго Дня")`;
         return await this.sendSMS(client.phone, defaultMessage);
       }
 
@@ -149,9 +149,9 @@ class SMSService {
         deliveryDate: order.deliveryDate,
         totalPrice: order.totalPrice,
         remainingPayment: order.remainingPayment,
-        shopName: 'Оптика',
-        shopPhone: '+380XXXXXXXXX', // Замените на ваш номер
-        shopAddress: 'ваш адрес' // Замените на ваш адрес
+        shopName: 'Оптика Нивки',
+        shopPhone: '+380679157706',
+        shopAddress: 'бул. Павла Вірського, 6, Київ (в аптеці "Доброго Дня")'
       });
 
       const result = await this.sendSMS(client.phone, message);
