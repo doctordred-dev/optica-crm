@@ -32,7 +32,7 @@ const createSMSTemplates = async () => {
     const templates = [
       {
         name: 'Заказ готов',
-        template: 'Добрий день, {clientName}! Ваше замовлення готове до видачі. {shopName}, тел. {shopPhone}. Адреса: {shopAddress}',
+        template: 'Добрий день, {clientName}! Ваше замовлення готове. {shopName}, тел. {shopPhone}. {shopAddress}',
         triggerEvent: 'order_ready',
         description: 'Уведомление о готовности заказа',
         availablePlaceholders: [
