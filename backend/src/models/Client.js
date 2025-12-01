@@ -50,6 +50,12 @@ const clientSchema = new mongoose.Schema({
     },
     default: 'другое'
   },
+  defaultDiscount: {
+    type: Number,
+    min: [0, 'Скидка не может быть отрицательной'],
+    max: [100, 'Скидка не может быть больше 100%'],
+    default: 0
+  },
   // Заказы будут получены через виртуальное поле
   // Метаданные
   createdBy: {
