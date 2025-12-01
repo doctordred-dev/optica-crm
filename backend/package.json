@@ -17,6 +17,7 @@
     "create-admin": "node src/scripts/createAdmin.js",
     "create-sms-templates": "node src/scripts/createSMSTemplates.js",
     "import-clients": "node src/scripts/importClientsFromExcel.js",
+    "import-mkl-clients": "node scripts/import-mkl-clients.js",
     "deploy-check": "node scripts/deploy-check.js",
     "build": "echo 'No build step required'",
     "postinstall": "echo 'Installation complete'"
