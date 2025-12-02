@@ -49,15 +49,32 @@ app.use(cors({
   optionsSuccessStatus: 200 // для поддержки старых браузеров
 }));
 
-// Rate limiting
-const limiter = rateLimit({
+// Rate limiting - разные лимиты для разных эндпоинтов
+const generalLimiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 минут
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100, // лимит запросов
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 500, // увеличен лимит
   message: {
     error: 'Слишком много запросов, попробуйте позже'
-  }
+  },
+  standardHeaders: true, // Возвращает информацию о лимитах в заголовках
+  legacyHeaders: false,
 });
-app.use('/api/', limiter);
+
+// Более строгий лимит для аутентификации (защита от брутфорса)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 минут
+  max: 10, // только 10 попыток входа
+  message: {
+    error: 'Слишком много попыток входа, попробуйте позже'
+  },
+  skipSuccessfulRequests: true, // не считаем успешные запросы
+});
+
+// Применяем общий лимит ко всем API
+app.use('/api/', generalLimiter);
+
+// Строгий лимит для логина
+app.use('/api/auth/login', authLimiter);
 
 // Логирование запросов
 if (process.env.NODE_ENV === 'development') {
