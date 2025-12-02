@@ -10,6 +10,7 @@ const getOrders = async (req, res) => {
     const {
       page = 1,
       limit = 20,
+      search = '',
       status = '',
       clientId = '',
       employeeId = '',
@@ -21,6 +22,48 @@ const getOrders = async (req, res) => {
 
     // Построение фильтра
     const filter = {};
+    
+    // Поиск по имени клиента, телефону или ID заказа
+    if (search && search.trim()) {
+      const searchTerm = search.trim();
+      
+      // Проверяем, является ли поисковый запрос валидным ObjectId
+      const isValidObjectId = /^[0-9a-fA-F]{24}$/.test(searchTerm);
+      
+      if (isValidObjectId) {
+        // Если это валидный ObjectId, ищем по ID заказа
+        filter._id = searchTerm;
+      } else {
+        // Иначе ищем клиентов по имени или телефону
+        const searchRegex = new RegExp(searchTerm, 'i');
+        const clients = await Client.find({
+          $or: [
+            { name: searchRegex },
+            { phone: searchRegex }
+          ]
+        }).select('_id');
+        
+        const clientIds = clients.map(c => c._id);
+        
+        if (clientIds.length > 0) {
+          filter.clientId = { $in: clientIds };
+        } else {
+          // Если клиенты не найдены, возвращаем пустой результат
+          return res.json({
+            success: true,
+            data: {
+              orders: [],
+              pagination: {
+                current: parseInt(page),
+                pages: 0,
+                total: 0,
+                limit: parseInt(limit)
+              }
+            }
+          });
+        }
+      }
+    }
     
     if (status) {
       filter.status = status;

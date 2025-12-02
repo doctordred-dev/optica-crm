@@ -246,6 +246,9 @@ const updateStatusSchema = Joi.object({
 const searchOrdersSchema = Joi.object({
   page: Joi.number().integer().min(1).default(1),
   limit: Joi.number().integer().min(1).max(100).default(20),
+  search: Joi.string().max(100).allow('').messages({
+    'string.max': 'Поисковый запрос не может быть длиннее 100 символов'
+  }),
   status: Joi.string().valid(
     'черновик', 
     'в_работе', 
