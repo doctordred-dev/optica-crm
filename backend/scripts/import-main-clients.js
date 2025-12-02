@@ -59,7 +59,7 @@ function extractFirstPhone(phoneStr) {
   return phones[0].trim();
 }
 
-async function importMKLClients() {
+async function importMainClients() {
   try {
     // Подключаемся к MongoDB
     console.log('🔌 Подключение к MongoDB...');
@@ -82,7 +82,7 @@ async function importMKLClients() {
     }
 
     // Путь к файлу Excel
-    const filePath = path.join(__dirname, '../../Клієнтська база МКЛ.xlsx');
+    const filePath = path.join(__dirname, '../../Клієнтська база.xlsx');
     console.log(`📂 Чтение файла: ${filePath}`);
 
     // Читаем файл Excel
@@ -99,8 +99,8 @@ async function importMKLClients() {
     let skipped = 0;
     let errors = 0;
 
-    // Пропускаем заголовок (первая строка)
-    for (let i = 1; i < data.length; i++) {
+    // Пропускаем заголовок (первые 2 строки)
+    for (let i = 2; i < data.length; i++) {
       const row = data[i];
 
       // Пропускаем пустые строки
@@ -110,16 +110,15 @@ async function importMKLClients() {
       }
 
       // Извлекаем данные из колонок
-      const lastName = row[0] ? String(row[0]).trim() : '';  // Колонка 1: Прізвище
-      const firstName = row[1] ? String(row[1]).trim() : ''; // Колонка 2: Ім'я
-      const phoneRaw = row[5]; // Колонка 6: Мобільний (индекс 5, так как нумерация с 0)
+      const lastName = row[0] ? String(row[0]).trim() : '';  // Колонка A: Прізвище
+      const firstName = row[1] ? String(row[1]).trim() : ''; // Колонка B: Ім'я
+      const phoneRaw = row[8]; // Колонка I: Мобільний (индекс 8, так как нумерация с 0)
 
       // Формируем полное имя
       const fullName = `${lastName} ${firstName}`.trim();
 
       // Если нет имени, пропускаем
       if (!fullName) {
-        console.log(`⚠️  Строка ${i + 1}: Пропущена (нет имени)`);
         skipped++;
         continue;
       }
@@ -151,7 +150,7 @@ async function importMKLClients() {
         const newClient = new Client({
           name: fullName,
           phone: phone,
-          source: 'МКЛ', // Устанавливаем источник как МКЛ
+          source: 'другое', // Устанавливаем источник по умолчанию
           createdBy: systemUser._id,
         });
 
@@ -168,7 +167,7 @@ async function importMKLClients() {
     console.log(`✅ Импортировано: ${imported}`);
     console.log(`⚠️  Пропущено: ${skipped}`);
     console.log(`❌ Ошибок: ${errors}`);
-    console.log(`📊 Всего обработано: ${data.length - 1} строк`);
+    console.log(`📊 Всего обработано: ${data.length - 2} строк`);
 
   } catch (error) {
     console.error('❌ Критическая ошибка:', error);
@@ -180,4 +179,4 @@ async function importMKLClients() {
 }
 
 // Запускаем импорт
-importMKLClients();
+importMainClients();

@@ -18,6 +18,8 @@
     "create-sms-templates": "node src/scripts/createSMSTemplates.js",
     "import-clients": "node src/scripts/importClientsFromExcel.js",
     "import-mkl-clients": "node scripts/import-mkl-clients.js",
+    "import-main-clients": "node scripts/import-main-clients.js",
+    "import-orders": "node scripts/import-orders-from-excel.js",
     "deploy-check": "node scripts/deploy-check.js",
     "build": "echo 'No build step required'",
     "postinstall": "echo 'Installation complete'"
