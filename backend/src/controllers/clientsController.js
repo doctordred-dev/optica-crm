@@ -136,9 +136,12 @@ const getClients = async (req, res) => {
 
   } catch (error) {
     logger.error('Ошибка получения клиентов:', error);
+    logger.error('Stack trace:', error.stack);
+    logger.error('Search filter:', JSON.stringify(searchFilter));
     res.status(500).json({
       success: false,
-      error: 'Ошибка сервера при получении клиентов'
+      error: 'Ошибка сервера при получении клиентов',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 };
