@@ -2,25 +2,25 @@ const Joi = require('joi');
 
 // Схема для рецепта глаза
 const eyeSchema = Joi.object({
-  sphere: Joi.number().min(-30).max(30).allow(null),
-  cylinder: Joi.number().min(-10).max(10).allow(null),
-  axis: Joi.number().min(0).max(180).allow(null),
-  addition: Joi.number().min(0).max(5).allow(null)
-});
+  sphere: Joi.number().min(-30).max(30).allow(null, ''),
+  cylinder: Joi.number().min(-10).max(10).allow(null, ''),
+  axis: Joi.number().min(0).max(180).allow(null, ''),
+  addition: Joi.number().min(0).max(5).allow(null, '')
+}).allow(null);
 
 // Схема для рецепта
 const prescriptionSchema = Joi.object({
   rightEye: eyeSchema,
   leftEye: eyeSchema,
-  pd: Joi.number().min(50).max(80).allow(null),
+  pd: Joi.number().min(50).max(80).allow(null, ''),
   purpose: Joi.string().valid(
     'для дали', 
     'для близи', 
     'для постоянного ношения', 
     'для компьютера', 
     'другое'
-  ).default('для постоянного ношения')
-});
+  ).allow('', null).default('для постоянного ношения')
+}).allow(null);
 
 // Схема для оправы
 const frameSchema = Joi.object({
@@ -36,11 +36,12 @@ const frameSchema = Joi.object({
   color: Joi.string().max(30).allow(''),
   size: Joi.string().max(20).allow(''),
   price: Joi.number().min(0).allow(null)
-});
+}).allow(null);
 
 // Схема для линз
 const lensesSchema = Joi.object({
   brand: Joi.string().max(50).allow(''),
+  model: Joi.string().max(50).allow(''),
   type: Joi.string().valid(
     'однофокальные', 
     'прогрессивные', 
@@ -66,7 +67,7 @@ const lensesSchema = Joi.object({
   ),
   index: Joi.number().min(1.0).max(2.0).allow(null),
   price: Joi.number().min(0).allow(null)
-});
+}).allow(null);
 
 // Валидация создания заказа
 const createOrderSchema = Joi.object({
