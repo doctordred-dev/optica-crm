@@ -5,10 +5,13 @@ const exportController = require('../controllers/exportController');
 
 // Обработка preflight OPTIONS запросов для CORS
 router.options('*', (req, res) => {
+  console.log('[EXPORT v2.0] OPTIONS preflight request from:', req.headers.origin);
+  console.log('[EXPORT v2.0] Request headers:', req.headers);
   res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  console.log('[EXPORT v2.0] Sending OPTIONS response with CORS headers');
   res.sendStatus(200);
 });
 
