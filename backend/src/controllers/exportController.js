@@ -34,6 +34,12 @@ const jsonToCSV = (data, headers) => {
 // @access  Private (manager+)
 const exportClients = async (req, res) => {
   try {
+    // Явно устанавливаем CORS заголовки для экспорта
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    
     const {
       source = '',
       ageMin = '',
@@ -124,6 +130,12 @@ const exportClients = async (req, res) => {
 // @access  Private (manager+)
 const exportOrders = async (req, res) => {
   try {
+    // Явно устанавливаем CORS заголовки для экспорта
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    
     const {
       status = '',
       clientId = '',
@@ -224,6 +236,12 @@ const exportOrders = async (req, res) => {
 // @access  Private (manager+)
 const exportSales = async (req, res) => {
   try {
+    // Явно устанавливаем CORS заголовки для экспорта
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    
     const {
       startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
       endDate = new Date()
