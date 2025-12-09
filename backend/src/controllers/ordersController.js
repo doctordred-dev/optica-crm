@@ -103,6 +103,18 @@ const getOrders = async (req, res) => {
     // Подсчет общего количества
     const total = await Order.countDocuments(filter);
 
+    // Подсчет заказов по статусам (без учета фильтра статуса)
+    const baseFilter = { ...filter };
+    delete baseFilter.status; // Убираем фильтр по статусу для общих счетчиков
+    
+    const statusCounts = await Promise.all([
+      Order.countDocuments(baseFilter),
+      Order.countDocuments({ ...baseFilter, status: 'черновик' }),
+      Order.countDocuments({ ...baseFilter, status: 'в_работе' }),
+      Order.countDocuments({ ...baseFilter, status: 'готов' }),
+      Order.countDocuments({ ...baseFilter, status: 'выдан' }),
+    ]);
+
     res.json({
       success: true,
       data: {
@@ -112,6 +124,13 @@ const getOrders = async (req, res) => {
           pages: Math.ceil(total / parseInt(limit)),
           total,
           limit: parseInt(limit)
+        },
+        statusCounts: {
+          all: statusCounts[0],
+          черновик: statusCounts[1],
+          в_работе: statusCounts[2],
+          готов: statusCounts[3],
+          выдан: statusCounts[4]
         }
       }
     });
