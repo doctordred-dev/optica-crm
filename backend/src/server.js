@@ -15,6 +15,9 @@ connectDB();
 
 const app = express();
 
+// Trust proxy - необходимо для работы за Render/Cloudflare
+app.set('trust proxy', 1);
+
 // Middleware безопасности
 app.use(helmet());
 app.use(compression());
