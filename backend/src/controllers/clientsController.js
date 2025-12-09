@@ -29,12 +29,15 @@ const getClients = async (req, res) => {
       const isPhone = /^\+?\d/.test(search);
       
       if (isPhone) {
-        // Нормализуем номер для поиска
-        const normalizedSearch = search.replace(/[^\d+]/g, '');
-        searchFilter.phone = { $regex: normalizedSearch, $options: 'i' };
+        // Нормализуем номер для поиска (убираем все кроме цифр)
+        const normalizedSearch = search.replace(/\D/g, '');
+        // Экранируем специальные символы regex
+        const escapedSearch = normalizedSearch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        searchFilter.phone = { $regex: escapedSearch, $options: 'i' };
       } else {
-        // Поиск по имени
-        searchFilter.name = { $regex: search, $options: 'i' };
+        // Поиск по имени (экранируем специальные символы)
+        const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        searchFilter.name = { $regex: escapedSearch, $options: 'i' };
       }
     }
 
