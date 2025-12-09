@@ -103,16 +103,17 @@ const getOrders = async (req, res) => {
     // Подсчет общего количества
     const total = await Order.countDocuments(filter);
 
-    // Подсчет заказов по статусам (без учета фильтра статуса)
-    const baseFilter = { ...filter };
-    delete baseFilter.status; // Убираем фильтр по статусу для общих счетчиков
+    // Подсчет заказов по статусам (только с учетом clientId и employeeId, игнорируя поиск и даты)
+    const baseFilterForCounts = {};
+    if (clientId) baseFilterForCounts.clientId = filter.clientId;
+    if (employeeId) baseFilterForCounts.employeeId = filter.employeeId;
     
     const statusCounts = await Promise.all([
-      Order.countDocuments(baseFilter),
-      Order.countDocuments({ ...baseFilter, status: 'черновик' }),
-      Order.countDocuments({ ...baseFilter, status: 'в_работе' }),
-      Order.countDocuments({ ...baseFilter, status: 'готов' }),
-      Order.countDocuments({ ...baseFilter, status: 'выдан' }),
+      Order.countDocuments(baseFilterForCounts),
+      Order.countDocuments({ ...baseFilterForCounts, status: 'черновик' }),
+      Order.countDocuments({ ...baseFilterForCounts, status: 'в_работе' }),
+      Order.countDocuments({ ...baseFilterForCounts, status: 'готов' }),
+      Order.countDocuments({ ...baseFilterForCounts, status: 'выдан' }),
     ]);
 
     res.json({
