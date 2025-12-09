@@ -35,12 +35,6 @@ const jsonToCSV = (data, headers) => {
 const exportClients = async (req, res) => {
   try {
     console.log('[EXPORT v2.0] exportClients called from:', req.headers.origin);
-    // Явно устанавливаем CORS заголовки для экспорта
-    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    console.log('[EXPORT v2.0] CORS headers set for exportClients');
     
     const {
       source = '',
@@ -111,10 +105,11 @@ const exportClients = async (req, res) => {
     // Устанавливаем заголовки для скачивания файла
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', `attachment; filename=clients_${Date.now()}.csv`);
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
     
-    // Добавляем BOM для корректного отображения кириллицы в Excel
-    res.write('\uFEFF');
-    res.send(csv);
+    // Добавляем BOM для корректного отображения кириллицы в Excel и отправляем CSV
+    res.send('\uFEFF' + csv);
 
     logger.info(`Экспорт клиентов выполнен пользователем ${req.user.email}`);
 
@@ -132,12 +127,6 @@ const exportClients = async (req, res) => {
 // @access  Private (manager+)
 const exportOrders = async (req, res) => {
   try {
-    // Явно устанавливаем CORS заголовки для экспорта
-    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    
     const {
       status = '',
       clientId = '',
@@ -217,10 +206,11 @@ const exportOrders = async (req, res) => {
     // Устанавливаем заголовки для скачивания файла
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', `attachment; filename=orders_${Date.now()}.csv`);
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
     
-    // Добавляем BOM для корректного отображения кириллицы в Excel
-    res.write('\uFEFF');
-    res.send(csv);
+    // Добавляем BOM для корректного отображения кириллицы в Excel и отправляем CSV
+    res.send('\uFEFF' + csv);
 
     logger.info(`Экспорт заказов выполнен пользователем ${req.user.email}`);
 
@@ -238,12 +228,6 @@ const exportOrders = async (req, res) => {
 // @access  Private (manager+)
 const exportSales = async (req, res) => {
   try {
-    // Явно устанавливаем CORS заголовки для экспорта
-    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    
     const {
       startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
       endDate = new Date()
@@ -289,8 +273,9 @@ const exportSales = async (req, res) => {
 
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', `attachment; filename=sales_${Date.now()}.csv`);
-    res.write('\uFEFF');
-    res.send(csv);
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.send('\uFEFF' + csv);
 
     logger.info(`Экспорт продаж выполнен пользователем ${req.user.email}`);
 
