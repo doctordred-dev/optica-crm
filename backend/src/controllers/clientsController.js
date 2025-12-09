@@ -5,6 +5,8 @@ const logger = require('../utils/logger');
 // @route   GET /api/clients
 // @access  Private (manager+)
 const getClients = async (req, res) => {
+  let searchFilter = {}; // Объявляем здесь для доступа в catch
+  
   try {
     const {
       page = 1,
@@ -20,9 +22,6 @@ const getClients = async (req, res) => {
       sortOrder = 'desc',
       includeStats = 'true'
     } = req.query;
-
-    // Построение фильтра поиска
-    const searchFilter = {};
     
     // Поиск по имени или телефону
     if (search) {
