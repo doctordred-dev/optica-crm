@@ -54,11 +54,21 @@ const createClientSchema = Joi.object({
       'социальные_сети', 
       'прохожий', 
       'постоянный_клиент',
+      'МКЛ',
       'другое'
     )
     .default('другое')
     .messages({
       'any.only': 'Неверный источник привлечения'
+    }),
+
+  defaultDiscount: Joi.number()
+    .min(0)
+    .max(100)
+    .default(0)
+    .messages({
+      'number.min': 'Скидка не может быть отрицательной',
+      'number.max': 'Скидка не может быть больше 100%'
     })
 });
 
@@ -112,10 +122,19 @@ const updateClientSchema = Joi.object({
       'социальные_сети', 
       'прохожий', 
       'постоянный_клиент',
+      'МКЛ',
       'другое'
     )
     .messages({
       'any.only': 'Неверный источник привлечения'
+    }),
+
+  defaultDiscount: Joi.number()
+    .min(0)
+    .max(100)
+    .messages({
+      'number.min': 'Скидка не может быть отрицательной',
+      'number.max': 'Скидка не может быть больше 100%'
     })
 }).min(1).messages({
   'object.min': 'Необходимо указать хотя бы одно поле для обновления'
