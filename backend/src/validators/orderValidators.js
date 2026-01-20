@@ -2,8 +2,12 @@ const Joi = require('joi');
 
 // Схема для рецепта глаза
 const eyeSchema = Joi.object({
-  sphere: Joi.number().min(-30).max(30).allow(null, ''),
-  cylinder: Joi.number().min(-10).max(10).allow(null, ''),
+  sphere: Joi.string().pattern(/^[+-]\d+(\.\d+)?$/).allow(null, '').messages({
+    'string.pattern.base': 'Сфера должна начинаться с + или - (например: +2.5 или -1.75)'
+  }),
+  cylinder: Joi.string().pattern(/^[+-]\d+(\.\d+)?$/).allow(null, '').messages({
+    'string.pattern.base': 'Цилиндр должен начинаться с + или - (например: +2.5 или -1.75)'
+  }),
   axis: Joi.number().min(0).max(180).allow(null, ''),
   addition: Joi.number().min(0).max(5).allow(null, '')
 }).allow(null);
@@ -16,10 +20,17 @@ const prescriptionSchema = Joi.object({
   purpose: Joi.string().valid(
     'для дали', 
     'для близи', 
+    'для читання',
     'для постоянного ношения', 
     'для компьютера', 
     'другое'
-  ).allow('', null).default('для постоянного ношения')
+  ).allow('', null).default('для постоянного ношения'),
+  masterWorkCost: Joi.number().min(0).allow(null, '').messages({
+    'number.min': 'Вартість роботи майстра не може бути від\'ємною'
+  }),
+  prescriptionOrderDate: Joi.date().allow(null, '').messages({
+    'date.base': 'Неверный формат даты замовлення по рецепту'
+  })
 }).allow(null);
 
 // Схема для оправы
