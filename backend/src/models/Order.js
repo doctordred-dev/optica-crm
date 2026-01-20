@@ -106,14 +106,24 @@ const orderSchema = new mongoose.Schema({
   prescription: {
     rightEye: {
       sphere: {
-        type: Number,
-        min: [-30, 'Сфера правого глаза не может быть меньше -30'],
-        max: [30, 'Сфера правого глаза не может быть больше +30']
+        type: String,
+        validate: {
+          validator: function(value) {
+            if (!value) return true;
+            return /^[+-]\d+(\.\d+)?$/.test(value);
+          },
+          message: 'Сфера должна быть с знаком + или -'
+        }
       },
       cylinder: {
-        type: Number,
-        min: [-10, 'Цилиндр правого глаза не может быть меньше -10'],
-        max: [10, 'Цилиндр правого глаза не может быть больше +10']
+        type: String,
+        validate: {
+          validator: function(value) {
+            if (!value) return true;
+            return /^[+-]\d+(\.\d+)?$/.test(value);
+          },
+          message: 'Цилиндр должен быть с знаком + или -'
+        }
       },
       axis: {
         type: Number,
@@ -128,14 +138,24 @@ const orderSchema = new mongoose.Schema({
     },
     leftEye: {
       sphere: {
-        type: Number,
-        min: [-30, 'Сфера левого глаза не может быть меньше -30'],
-        max: [30, 'Сфера левого глаза не может быть больше +30']
+        type: String,
+        validate: {
+          validator: function(value) {
+            if (!value) return true;
+            return /^[+-]\d+(\.\d+)?$/.test(value);
+          },
+          message: 'Сфера должна быть с знаком + или -'
+        }
       },
       cylinder: {
-        type: Number,
-        min: [-10, 'Цилиндр левого глаза не может быть меньше -10'],
-        max: [10, 'Цилиндр левого глаза не может быть больше +10']
+        type: String,
+        validate: {
+          validator: function(value) {
+            if (!value) return true;
+            return /^[+-]\d+(\.\d+)?$/.test(value);
+          },
+          message: 'Цилиндр должен быть с знаком + или -'
+        }
       },
       axis: {
         type: Number,
@@ -157,6 +177,14 @@ const orderSchema = new mongoose.Schema({
       type: String,
       enum: ['для дали', 'для близи', 'для читання', 'для постоянного ношения', 'для компьютера', 'другое'],
       default: 'для постоянного ношения'
+    },
+    masterWorkCost: {
+      type: Number,
+      min: [0, 'Вартість роботи майстра не може бути від\'ємною'],
+      default: 0
+    },
+    prescriptionOrderDate: {
+      type: Date
     }
   },
 

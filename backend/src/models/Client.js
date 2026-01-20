@@ -10,7 +10,6 @@ const clientSchema = new mongoose.Schema({
   phone: {
     type: String,
     required: [true, 'Телефон обязателен'],
-    unique: true,
     match: [
       /^\+380\d{9}$/,
       'Телефон должен быть в формате +380XXXXXXXXX'
