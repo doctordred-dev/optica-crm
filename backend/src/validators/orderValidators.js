@@ -9,7 +9,7 @@ const eyeSchema = Joi.object({
     'string.pattern.base': 'Цилиндр должен начинаться с + или - (например: +2.5 или -1.75)'
   }),
   axis: Joi.number().min(0).max(180).allow(null, ''),
-  addition: Joi.number().min(0).max(5).allow(null, '')
+  addition: Joi.number().allow(null, '')
 }).allow(null);
 
 // Схема для рецепта
@@ -51,8 +51,8 @@ const frameSchema = Joi.object({
 
 // Схема для линз
 const lensesSchema = Joi.object({
-  brand: Joi.string().max(50).allow(''),
-  model: Joi.string().max(50).allow(''),
+  brand: Joi.string().max(100).allow(''),
+  model: Joi.string().max(100).allow(''),
   type: Joi.string().valid(
     'однофокальные', 
     'прогрессивные', 

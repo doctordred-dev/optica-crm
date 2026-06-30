@@ -75,7 +75,12 @@ const orderSchema = new mongoose.Schema({
     brand: {
       type: String,
       trim: true,
-      maxlength: [50, 'Бренд линз не может быть длиннее 50 символов']
+      maxlength: [100, 'Бренд линз не может быть длиннее 100 символов']
+    },
+    model: {
+      type: String,
+      trim: true,
+      maxlength: [100, 'Модель линз не может быть длиннее 100 символов']
     },
     type: {
       type: String,
@@ -131,9 +136,7 @@ const orderSchema = new mongoose.Schema({
         max: [180, 'Ось правого глаза не может быть больше 180']
       },
       addition: {
-        type: Number,
-        min: [0, 'Аддидация не может быть отрицательной'],
-        max: [5, 'Аддидация не может быть больше +5']
+        type: Number
       }
     },
     leftEye: {
@@ -163,9 +166,7 @@ const orderSchema = new mongoose.Schema({
         max: [180, 'Ось левого глаза не может быть больше 180']
       },
       addition: {
-        type: Number,
-        min: [0, 'Аддидация не может быть отрицательной'],
-        max: [5, 'Аддидация не может быть больше +5']
+        type: Number
       }
     },
     pd: {
