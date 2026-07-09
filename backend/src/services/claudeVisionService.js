@@ -182,9 +182,17 @@ class ClaudeVisionService {
       }
     }));
 
-    const response = await this.client.messages.create({
+    // Реальні бланки набагато щільніші за тестові — 2 документи з дрібним
+    // почерком на фото легко з'їдають кілька тисяч токенів тільки на
+    // adaptive thinking (плюс детекція пар/патернів A/B/C з §4.4a - це
+    // само по собі вимагає розмірковування). При замалому max_tokens
+    // генерація обривається ДО того, як з'явиться сам JSON-блок (стара
+    // межа 4096 була для цього замала) — звідси "порожня відповідь" або
+    // обрізаний невалідний JSON. Стрімимо, бо великий max_tokens
+    // ризикує впертися в HTTP-таймаут на нестрімінгових запитах.
+    const stream = this.client.messages.stream({
       model: 'claude-sonnet-5',
-      max_tokens: 4096,
+      max_tokens: 16000,
       system: SYSTEM_PROMPT,
       output_config: {
         effort: 'high',
@@ -206,13 +214,27 @@ class ClaudeVisionService {
         }
       ]
     });
+    const response = await stream.finalMessage();
 
     if (response.stop_reason === 'refusal') {
       throw new Error('Claude відмовився обробити зображення (refusal)');
     }
+    if (response.stop_reason === 'max_tokens') {
+      logger.error('Claude вичерпав max_tokens до завершення розпізнавання', {
+        stopReason: response.stop_reason,
+        usage: response.usage
+      });
+      throw new Error(
+        'ШІ не встиг завершити розпізнавання — забракло ліміту токенів. Спробуйте менше фото за раз або зверніться до розробника.'
+      );
+    }
 
     const textBlock = response.content.find((block) => block.type === 'text');
     if (!textBlock) {
+      logger.error('Немає text-блоку у відповіді Claude', {
+        stopReason: response.stop_reason,
+        contentTypes: response.content.map((b) => b.type)
+      });
       throw new Error('Порожня відповідь від Claude API');
     }
 
