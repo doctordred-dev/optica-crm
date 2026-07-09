@@ -234,6 +234,11 @@ const orderSchema = new mongoose.Schema({
     default: 'черновик'
   },
 
+  // Оригінали фото бланка, з яких заповнено замовлення через ШІ (опційно)
+  sourcePhotos: [{
+    type: String
+  }],
+
   // Комментарии
   masterComments: {
     type: String,
