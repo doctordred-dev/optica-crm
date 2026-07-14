@@ -5,6 +5,22 @@
 const toNum = (v) => (v === null || v === undefined || v === '' ? null : Number(v));
 const toStr = (v) => (v === null || v === undefined ? '' : String(v));
 
+// Нормализует pd, распознанный ИИ, в формат "NN" или "NN-MM" (см. pd в Order.js):
+// приводит запятую к точке, а разделитель "/" — к тире, и упорядочивает диапазон по возрастанию.
+function normalizePd(raw) {
+  const s = toStr(raw).trim().replace(',', '.');
+  if (!s) return '';
+  const parts = s.split(/[-/]/).map((p) => p.trim()).filter(Boolean);
+  if (parts.length === 2) {
+    const nums = parts.map(Number);
+    if (nums.every((n) => !Number.isNaN(n))) {
+      const [a, b] = nums;
+      return a <= b ? `${a}-${b}` : `${b}-${a}`;
+    }
+  }
+  return s;
+}
+
 function normalizePhoneDigits(phone) {
   if (!phone) return '';
   const digits = String(phone).replace(/\D/g, '');
@@ -155,7 +171,7 @@ function buildOrderDraft(pair, client) {
     leftCylinder: toStr(pair.prescription?.leftEye?.cylinder),
     leftAxis: toStr(toNum(pair.prescription?.leftEye?.axis) ?? '0'),
     leftAddition: toStr(toNum(pair.prescription?.leftEye?.addition) ?? '0'),
-    pd: toStr(toNum(pair.prescription?.pd) ?? '0'),
+    pd: normalizePd(pair.prescription?.pd) || '0',
     purpose: mapPurpose(pair.prescription?.purposeRaw),
     masterWorkCost: toStr(toNum(pair.payment?.masterWorkCost) ?? '0'),
     prescriptionOrderDate: '',
@@ -185,5 +201,6 @@ module.exports = {
   mapCoating,
   mapPurpose,
   inferProductType,
-  normalizePhoneDigits
+  normalizePhoneDigits,
+  normalizePd
 };
