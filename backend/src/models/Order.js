@@ -170,9 +170,18 @@ const orderSchema = new mongoose.Schema({
       }
     },
     pd: {
-      type: Number,
-      min: [50, 'Межзрачковое расстояние не может быть меньше 50мм'],
-      max: [80, 'Межзрачковое расстояние не может быть больше 80мм']
+      type: String,
+      validate: {
+        validator: function(value) {
+          if (!value) return true;
+          if (!/^\d{2,3}(\.\d+)?(-\d{2,3}(\.\d+)?)?$/.test(value)) return false;
+          const parts = value.split('-').map(Number);
+          if (parts.some((n) => n < 50 || n > 80)) return false;
+          if (parts.length === 2 && parts[0] >= parts[1]) return false;
+          return true;
+        },
+        message: 'Межзрачковое расстояние должно быть числом от 50 до 80мм или диапазоном через тире (напр. 66-68)'
+      }
     },
     purpose: {
       type: String,

@@ -16,7 +16,22 @@ const eyeSchema = Joi.object({
 const prescriptionSchema = Joi.object({
   rightEye: eyeSchema,
   leftEye: eyeSchema,
-  pd: Joi.number().min(50).max(80).allow(null, ''),
+  pd: Joi.string()
+    .pattern(/^\d{2,3}(\.\d+)?(-\d{2,3}(\.\d+)?)?$/)
+    .custom((value, helpers) => {
+      const parts = value.split('-').map(Number);
+      if (parts.some((n) => n < 50 || n > 80)) {
+        return helpers.message('Межзрачковое расстояние должно быть в диапазоне 50-80мм');
+      }
+      if (parts.length === 2 && parts[0] >= parts[1]) {
+        return helpers.message('Некорректный диапазон межзрачкового расстояния (начало должно быть меньше конца)');
+      }
+      return value;
+    })
+    .allow(null, '')
+    .messages({
+      'string.pattern.base': 'Межзрачковое расстояние должно быть числом (например 63) или диапазоном через тире (например 66-68)'
+    }),
   purpose: Joi.string().valid(
     'для дали', 
     'для близи', 
